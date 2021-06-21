@@ -1,5 +1,6 @@
 import numpy as np
 from numpy.random import random, randint
+from random import randrange
 
 BOARD_SIZE = 5
 SHIP = 0
@@ -382,6 +383,13 @@ def predict(data):
     #print(bState)
     bState = data['board_state']
     bShips = data['ship_types']
+
+    # Always a random cell for first turn
+    if is_first_turn(bState):
+        random_atk = get_random_cell()
+        print("selected random first attack:", random_atk)
+        return random_atk
+
     ship_loc = get_sunkShips(bShips)
     mat = np.array(bState)
     mat = mat.transpose()
@@ -395,6 +403,20 @@ def predict(data):
     print(res)
     return res
 
+def get_random_cell():
+    x = randrange(0, 5)
+    y = randrange(0, 5)
+
+    return {"x": y, "y": x}
+
+def is_first_turn(bState):
+    sum = 0
+    for row in bState:
+        for val in row:
+            sum += val
+
+    # -25 means no cells have been played yet
+    return sum == -25
 
 if __name__ == "__main__":
     BOARD_STATE[2][2] = MISS
